@@ -18,10 +18,11 @@ class m180103_112059_create_table extends Migration
             'name' => $this->string()->notNull(),
             'tags' => $this->string(),
             'description' => $this->string(),
+            'status' => $this->smallInteger(1)->defaultValue(1),
             'parentId' => $this->integer(),
             'depth' => $this->integer()->notNull()->defaultValue(0),
-            'createAt' => $this->integer(20)->notNull(),
-            'updateAt' => $this->integer(20)->notNull(),
+            'updateAt' => $this->dateTime(),
+            'createAt' => $this->dateTime(),
         ]);
     }
 
