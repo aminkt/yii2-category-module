@@ -16,10 +16,16 @@
 ]) ?>
 <?= $form->field($model, 'description')->textarea() ?>
 <?php
-$categories = \saghar\category\models\Categories::find()
-    ->where(['!=', 'status', \saghar\category\models\Categories::STATUS_REMOVED])
-    ->andWhere(['!=', 'id', $model->id])
-    ->all();
+if ($model->id) {
+    $categories = \saghar\category\models\Categories::find()
+        ->where(['!=', 'status', \saghar\category\models\Categories::STATUS_REMOVED])
+        ->andWhere(['!=', 'id', $model->id])
+        ->all();
+} else {
+    $categories = \saghar\category\models\Categories::find()
+        ->where(['!=', 'status', \saghar\category\models\Categories::STATUS_REMOVED])
+        ->all();
+}
 $categories = \yii\helpers\ArrayHelper::map($categories, 'id', 'name', 'parentName');
 echo \kartik\select2\Select2::widget([
     'model' => $model,

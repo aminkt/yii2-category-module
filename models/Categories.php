@@ -71,7 +71,7 @@ class Categories extends \yii\db\ActiveRecord
      */
     public function getParent()
     {
-        return $this->hasOne(Categories::className(), ['parentId' => 'id']);
+        return $this->hasOne(Categories::className(), ['id' => 'parentId']);
     }
 
     /**
@@ -229,6 +229,34 @@ class Categories extends \yii\db\ActiveRecord
     }
 
     /**
+     * Return an array to show business categories as a tree
+     *
+     * @param null $id
+     *
+     * @return array|null
+     */
+    public static function getBusinessCategoriesAsArray($id = null)
+    {
+        $categories = static::find()
+            ->where(['parentId' => $id])
+            ->andWhere(['=', 'section', 'business'])
+            ->andWhere(['!=', 'status', self::STATUS_REMOVED])
+            ->all();
+        if ($categories) {
+            $arr = Array();
+            foreach ($categories as $cat) {
+                $children = static::getBusinessCategoriesAsArray($cat->id);
+                if ($children)
+                    $arr[] = ['id' => $cat->id, 'name' => $cat->name, 'parent' => $children];
+                else
+                    $arr[] = ['id' => $cat->id, 'name' => $cat->name];
+            }
+            return $arr;
+        }
+        return null;
+    }
+
+    /**
      * Get parent name
      *
      * @return string
@@ -257,4 +285,14 @@ class Categories extends \yii\db\ActiveRecord
         throw new \RuntimeException('Status not changed');
     }
 
-}
+    /**
+     * Returns static class instance, which can be used to obtain meta information.
+     *
+     * @param bool $refresh whether to re-create static instance even, if it is already cached.
+     *
+     * @return static class instance.
+     */
+    public static function instance($refresh = false)
+    {
+        // TODO: Implement instance() method.
+}}

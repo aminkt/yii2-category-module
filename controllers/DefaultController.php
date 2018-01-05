@@ -14,7 +14,9 @@ class DefaultController extends Controller
 {
     /**
      * Renders the index view for the module
+     *
      * @param null $id
+     *
      * @return string
      * @throws NotFoundHttpException
      */
@@ -25,7 +27,7 @@ class DefaultController extends Controller
             if (!$model) {
                 throw new NotFoundHttpException("دسته مورر نظر یافت نشد");
             }
-        }else{
+        } else {
             $model = new Categories();
         }
 

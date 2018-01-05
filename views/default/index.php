@@ -3,7 +3,7 @@
 /** @var \saghar\category\models\Categories[] $categories */
 /** @var \saghar\category\models\Categories $model */
 
-$this->title = "مدیدیت دسته ها"
+$this->title = "مدیریت دسته ها"
 
 ?>
 
@@ -12,7 +12,7 @@ $this->title = "مدیدیت دسته ها"
 
     <div class="row">
         <div class="col-md-6">
-            <?= yii\helpers\Html::a('ایجاد دسته جدید', ['/category/default/create'], ['class' => 'btn btn-primary']) ?>
+            <?= yii\helpers\Html::a('ایجاد دسته جدید', ['/category/default/index'], ['class' => 'btn btn-primary']) ?>
 
             <?= \aminkt\widgets\tree\TreeView::widget([
                 'data' => \saghar\category\models\Categories::getCategoriesAsArray(),
