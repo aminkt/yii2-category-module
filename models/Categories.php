@@ -26,7 +26,7 @@ use yii\web\NotFoundHttpException;
  * @property Categories $parent
  * @property string $parentName
  */
-class Categories extends \yii\db\ActiveRecord
+class Categories extends ActiveRecord
 {
     const STATUS_ACTIVE = 1;
     const STATUS_REMOVED = 2;
@@ -257,6 +257,35 @@ class Categories extends \yii\db\ActiveRecord
     }
 
     /**
+     * Return an array to show categories as a tree found in specific section
+     *
+     * @param $section
+     * @param null $id
+     *
+     * @return array|null
+     */
+    public static function getCategoriesBySectionAsArray($section, $id = null)
+    {
+        $categories = static::find()
+            ->where(['parentId' => $id])
+            ->andWhere(['=', 'section', $section])
+            ->andWhere(['!=', 'status', self::STATUS_REMOVED])
+            ->all();
+        if ($categories) {
+            $arr = Array();
+            foreach ($categories as $cat) {
+                $children = static::getCategoriesBySectionAsArray($section, $cat->id);
+                if ($children)
+                    $arr[] = ['id' => $cat->id, 'name' => $cat->name, 'parent' => $children];
+                else
+                    $arr[] = ['id' => $cat->id, 'name' => $cat->name];
+            }
+            return $arr;
+        }
+        return null;
+    }
+
+    /**
      * Get parent name
      *
      * @return string
@@ -284,15 +313,4 @@ class Categories extends \yii\db\ActiveRecord
         }
         throw new \RuntimeException('Status not changed');
     }
-
-    /**
-     * Returns static class instance, which can be used to obtain meta information.
-     *
-     * @param bool $refresh whether to re-create static instance even, if it is already cached.
-     *
-     * @return static class instance.
-     */
-    public static function instance($refresh = false)
-    {
-        // TODO: Implement instance() method.
-}}
+}
