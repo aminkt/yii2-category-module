@@ -229,34 +229,6 @@ class Categories extends ActiveRecord
     }
 
     /**
-     * Return an array to show business categories as a tree
-     *
-     * @param null $id
-     *
-     * @return array|null
-     */
-    public static function getBusinessCategoriesAsArray($id = null)
-    {
-        $categories = static::find()
-            ->where(['parentId' => $id])
-            ->andWhere(['=', 'section', 'business'])
-            ->andWhere(['!=', 'status', self::STATUS_REMOVED])
-            ->all();
-        if ($categories) {
-            $arr = Array();
-            foreach ($categories as $cat) {
-                $children = static::getBusinessCategoriesAsArray($cat->id);
-                if ($children)
-                    $arr[] = ['id' => $cat->id, 'name' => $cat->name, 'parent' => $children];
-                else
-                    $arr[] = ['id' => $cat->id, 'name' => $cat->name];
-            }
-            return $arr;
-        }
-        return null;
-    }
-
-    /**
      * Return an array to show categories as a tree found in specific section
      *
      * @param $section
