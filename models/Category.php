@@ -10,7 +10,7 @@ use yii\db\Expression;
 use yii\web\NotFoundHttpException;
 
 /**
- * This is the model class for table "tbl_categories".
+ * This is the model class for table "{{%categories}}".
  *
  * @property int $id
  * @property string $section
@@ -20,13 +20,13 @@ use yii\web\NotFoundHttpException;
  * @property int $status
  * @property int $parentId
  * @property int $depth
- * @property int $createAt
- * @property int $updateAt
+ * @property string $updateAt
+ * @property string $createAt
  *
- * @property Categories $parent
+ * @property Category $parent
  * @property string $parentName
  */
-class Categories extends ActiveRecord
+class Category extends ActiveRecord
 {
     const STATUS_ACTIVE = 1;
     const STATUS_REMOVED = 2;
@@ -36,7 +36,7 @@ class Categories extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'tbl_categories';
+        return '{{%categories}}';
     }
 
     public function behaviors()
@@ -67,14 +67,6 @@ class Categories extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getParent()
-    {
-        return $this->hasOne(Categories::className(), ['id' => 'parentId']);
-    }
-
-    /**
      * @inheritdoc
      */
     public function attributeLabels()
@@ -88,9 +80,25 @@ class Categories extends ActiveRecord
             'status' => 'Status',
             'parentId' => 'Parent ID',
             'depth' => 'Depth',
-            'createAt' => 'Create At',
             'updateAt' => 'Update At',
+            'createAt' => 'Create At',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getParent()
+    {
+        return $this->hasOne(Category::className(), ['id' => 'parentId']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCategories()
+    {
+        return $this->hasMany(Category::className(), ['parentId' => 'id']);
     }
 
     /**
@@ -108,6 +116,8 @@ class Categories extends ActiveRecord
      *      ]
      * </code>
      *
+     * @return Category
+     *
      * @internal  string $section section
      *
      * @internal  string $name name
@@ -122,13 +132,10 @@ class Categories extends ActiveRecord
      *
      * @internal  integer $depth depth
      *
-     * @return Categories
-     *
-     * @throws \RuntimeException
      */
     public static function create($data)
     {
-        $categories = new Categories();
+        $categories = new Category();
         $categories->section = isset($data['section']) ? $data['section'] : 'main';
         $categories->name = isset($data['name']) ? $data['name'] : '';
         $categories->tags = isset($data['tags']) ? $data['tags'] : null;
@@ -163,6 +170,10 @@ class Categories extends ActiveRecord
      *      ]
      * </code>
      *
+     * @return null|Category
+     *
+     * @throws NotFoundHttpException
+     *
      * @internal  string $section section
      *
      * @internal  string $name name
@@ -177,13 +188,10 @@ class Categories extends ActiveRecord
      *
      * @internal  integer $depth depth
      *
-     * @return Categories
-     *
-     * @throws NotFoundHttpException
      */
     public static function edit($id, $data)
     {
-        $category = Categories::findOne($id);
+        $category = Category::findOne($id);
         if ($category) {
             $category->section = isset($data['section']) ? $data['section'] : 'main';
             $category->name = isset($data['name']) ? $data['name'] : '';
@@ -212,6 +220,7 @@ class Categories extends ActiveRecord
      */
     public static function getCategoriesAsArray($id = null)
     {
+        /** @var Category $categories */
         $categories = static::find()->where(['parentId' => $id])->andWhere(['!=', 'status', self::STATUS_REMOVED])->all();
 
         if ($categories) {
@@ -238,6 +247,7 @@ class Categories extends ActiveRecord
      */
     public static function getCategoriesBySectionAsArray($section, $id = null)
     {
+        /** @var Category $categories */
         $categories = static::find()
             ->where(['parentId' => $id])
             ->andWhere(['=', 'section', $section])
