@@ -1,7 +1,7 @@
 <?php
 /** @var \yii\web\View $this */
-/** @var \saghar\category\models\Categories[] $categories */
-/** @var \saghar\category\models\Categories $model */
+/** @var \saghar\category\models\Category[] $categories */
+/** @var \saghar\category\models\Category $model */
 
 $this->title = "مدیریت دسته ها"
 
@@ -15,7 +15,7 @@ $this->title = "مدیریت دسته ها"
             <?= yii\helpers\Html::a('ایجاد دسته جدید', ['/category/default/index'], ['class' => 'btn btn-primary']) ?>
 
             <?= \aminkt\widgets\tree\TreeView::widget([
-                'data' => \saghar\category\models\Categories::getCategoriesAsArray(),
+                'data' => \saghar\category\models\Category::getCategoriesAsArray(),
                 'remove' => ['/category/default/delete'],
                 'edit' => ['/category/default/index'],
             ]);

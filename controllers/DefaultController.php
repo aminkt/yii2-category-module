@@ -3,7 +3,7 @@
 namespace saghar\category\controllers;
 
 use aminkt\widgets\alert\Alert;
-use saghar\category\models\Categories;
+use saghar\category\models\Category;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -23,24 +23,25 @@ class DefaultController extends Controller
     public function actionIndex($id = null)
     {
         if ($id) {
-            $model = Categories::findOne($id);
+            $model = Category::findOne($id);
             if (!$model) {
                 throw new NotFoundHttpException("دسته مورر نظر یافت نشد");
             }
         } else {
-            $model = new Categories();
+            $model = new Category();
         }
 
         if (\Yii::$app->getRequest()->isPost) {
             try {
                 if ($model->isNewRecord) {
-                    $model = Categories::create(\Yii::$app->getRequest()->post('Categories'));
+                    $model = Category::create(\Yii::$app->getRequest()->post('Category'));
                 } else {
-                    $model = Categories::edit($id, \Yii::$app->getRequest()->post('Categories'));
+                    $model = Category::edit($id, \Yii::$app->getRequest()->post('Category'));
                 }
             } catch (NotFoundHttpException $e) {
                 Alert::error('خطا در انجام عملیات', 'دسته مورد نظر ایجاد نشد');
             } catch (\RuntimeException $e) {
+                \Yii::error($e->getMessage());
                 Alert::error("خطا در ذخیره اطلاعات", "دسته مورد نظر ذخیره نشد");
             }
             return $this->redirect(['index']);
@@ -59,10 +60,10 @@ class DefaultController extends Controller
      */
     public function actionDelete($id)
     {
-        $category = Categories::findOne($id);
+        $category = Category::findOne($id);
         if ($category) {
             try {
-                $category->setStatus(Categories::STATUS_REMOVED);
+                $category->setStatus(Category::STATUS_REMOVED);
                 Alert::success('عملیات با موفقیت انجام شد', 'دسته مورد نظر حذف شد');
                 $this->redirect(['index']);
             } catch (\Exception $e) {
@@ -73,5 +74,4 @@ class DefaultController extends Controller
             throw new NotFoundHttpException("دسته پیدا نشد");
         }
     }
-
 }

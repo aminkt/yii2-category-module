@@ -1,5 +1,5 @@
 <?php
-/** @var \saghar\category\models\Categories $model */
+/** @var \saghar\category\models\Category $model */
 ?>
 
 <?php $form = \yii\widgets\ActiveForm::begin([
@@ -17,13 +17,13 @@
 <?= $form->field($model, 'description')->textarea() ?>
 <?php
 if ($model->id) {
-    $categories = \saghar\category\models\Categories::find()
-        ->where(['!=', 'status', \saghar\category\models\Categories::STATUS_REMOVED])
+    $categories = \saghar\category\models\Category::find()
+        ->where(['!=', 'status', \saghar\category\models\Category::STATUS_REMOVED])
         ->andWhere(['!=', 'id', $model->id])
         ->all();
 } else {
-    $categories = \saghar\category\models\Categories::find()
-        ->where(['!=', 'status', \saghar\category\models\Categories::STATUS_REMOVED])
+    $categories = \saghar\category\models\Category::find()
+        ->where(['!=', 'status', \saghar\category\models\Category::STATUS_REMOVED])
         ->all();
 }
 $categories = \yii\helpers\ArrayHelper::map($categories, 'id', 'name', 'parentName');

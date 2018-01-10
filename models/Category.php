@@ -135,20 +135,20 @@ class Category extends ActiveRecord
      */
     public static function create($data)
     {
-        $categories = new Category();
-        $categories->section = isset($data['section']) ? $data['section'] : 'main';
-        $categories->name = isset($data['name']) ? $data['name'] : '';
-        $categories->tags = isset($data['tags']) ? $data['tags'] : null;
-        $categories->description = isset($data['description']) ? $data['description'] : null;
-        $categories->status = isset($data['status']) ? $data['status'] : 1;
-        $categories->parentId = isset($data['parentId']) ? $data['parentId'] : null;
-        $categories->depth = isset($data['depth']) ? $data['depth'] : 0;
+        $category = new Category();
+        $category->section = isset($data['section']) ? $data['section'] : 'main';
+        $category->name = isset($data['name']) ? $data['name'] : '';
+        $category->tags = isset($data['tags']) ? $data['tags'] : null;
+        $category->description = isset($data['description']) ? $data['description'] : null;
+        $category->status = isset($data['status']) ? $data['status'] : 1;
+        $category->parentId = isset($data['parentId']) ? $data['parentId'] : null;
+        $category->depth = isset($data['depth']) ? $data['depth'] : 0;
 
-        if ($categories->save()) {
-            Alert::success('دسته با موفقیت ایجاد شد', 'اسم دسته جدید : ' . $categories->name);
-            return $categories;
+        if ($category->save()) {
+            Alert::success('دسته با موفقیت ایجاد شد', 'اسم دسته جدید : ' . $category->name);
+            return $category;
         } else {
-            \Yii::error($categories->getErrors());
+            \Yii::error($category->getErrors());
             throw new \RuntimeException('دسته ذخیره نشد.');
         }
     }
