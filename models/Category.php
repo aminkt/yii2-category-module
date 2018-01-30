@@ -3,7 +3,6 @@
 namespace saghar\category\models;
 
 use aminkt\widgets\alert\Alert;
-use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
@@ -74,12 +73,12 @@ class Category extends ActiveRecord
         return [
             'id' => 'ID',
             'section' => 'Section',
-            'name' => 'Name',
-            'tags' => 'Tags',
-            'description' => 'Description',
-            'status' => 'Status',
-            'parentId' => 'Parent ID',
-            'depth' => 'Depth',
+            'name' => 'نام',
+            'tags' => 'تگ ها',
+            'description' => 'توضیحات',
+            'status' => 'وضعیت',
+            'parentId' => 'والد',
+            'depth' => 'عمق',
             'updateAt' => 'Update At',
             'createAt' => 'Create At',
         ];
