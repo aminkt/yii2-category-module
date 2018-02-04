@@ -3,9 +3,11 @@
 namespace saghar\category\models;
 
 use aminkt\widgets\alert\Alert;
+use api\components\UrlMaker;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -293,5 +295,48 @@ class Category extends ActiveRecord
             return $this;
         }
         throw new \RuntimeException('Status not changed');
+    }
+
+    /**
+     * Get category link
+     *
+     * @param bool $api
+     *
+     * @return null|string
+     *
+     * @author Saghar Mojdehi <saghar.mojdehi@gmail.com>
+     */
+    public function getLink($api = true)
+    {
+        if ($this->depth < 2) {
+            $route = [
+                '/business/index',
+                'depth' => $this->depth + 1,
+                'parentId' => $this->id
+            ];
+        } elseif ($this->depth == 2) {
+            $route = ['/business/list', 'catId' => $this->id];
+        } else {
+            return null;
+        }
+
+        if ($api) {
+            return UrlMaker::to($route);
+        } else {
+            return Url::to($route);
+        }
+    }
+
+    public function fields()
+    {
+        $fields = [
+            'id',
+            'name',
+            'description',
+            'updateAt',
+            'createAt',
+        ];
+
+        return $fields;
     }
 }
