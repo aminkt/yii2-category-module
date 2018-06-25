@@ -21,6 +21,7 @@ use yii\web\NotFoundHttpException;
  * @property int $status
  * @property int $parentId
  * @property int $depth
+ * @property Category $child
  * @property string $updateAt
  * @property string $createAt
  *
@@ -213,6 +214,15 @@ class Category extends ActiveRecord
     }
 
     /**
+     * Get one level down child of current category.
+     *
+     * @return $this
+     */
+    public function getChild(){
+        return $this->hasMany(self::class, ['parentId' => 'id'])->where(['depth'=>$this->depth+1]);
+    }
+
+    /**
      * Return an array to show categories as a tree
      *
      * @param null $id
@@ -335,6 +345,7 @@ class Category extends ActiveRecord
             'description',
             'updateAt',
             'createAt',
+            'child'
         ];
 
         return $fields;
