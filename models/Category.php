@@ -21,11 +21,12 @@ use yii\web\NotFoundHttpException;
  * @property int $status
  * @property int $parentId
  * @property int $depth
- * @property Category $child
+ *
+ * @property Category[] $children
  * @property string $updateAt
  * @property string $createAt
  *
- * @property Category $parent
+ * @property Category $parent read-only
  * @property string $parentName
  */
 class Category extends ActiveRecord
@@ -64,6 +65,7 @@ class Category extends ActiveRecord
         return [
             [['name'], 'required'],
             [['status', 'parentId', 'depth'], 'integer'],
+            [['children'], 'safe'],
             [['section', 'name', 'tags', 'description'], 'string', 'max' => 255],
         ];
     }
@@ -114,36 +116,54 @@ class Category extends ActiveRecord
      *          'description' => $description,
      *          'status' => $status,
      *          'parentId' => $parentId,
+     *          'prent' => [
+     *              'section' => $section,
+     *              'name' => $name,
+     *              'tags' => $tags,
+     *              'description' => $description,
+     *              'status' => $status,
+     *              'parentId' => $parentId,
+     *              'prent' => [
+     *                  .....
+     *              ]
+     *              'depth' => $depth,
+     *          ]
      *          'depth' => $depth,
      *      ]
      * </code>
      *
      * @return Category
      *
-     * @internal  string $section section
+     * @internal  string $section section optional
      *
      * @internal  string $name name
      *
-     * @internal  string $tags tags
+     * @internal  string $tags tags optional
      *
-     * @internal  string $description description
+     * @internal  string $description description optional
      *
-     * @internal  smallInteger $status status
+     * @internal  smallInteger $status status optional
      *
-     * @internal  integer $parentId parentId
+     * @internal  integer $parentId parentId optional
      *
-     * @internal  integer $depth depth
+     * @internal  array $parrent optional
+     *
+     * @internal  integer $depth depth optional
      *
      */
     public static function create($data)
     {
         $category = new Category();
         $category->section = isset($data['section']) ? $data['section'] : 'main';
-        $category->name = isset($data['name']) ? $data['name'] : '';
+        $category->name = $data['name'];
         $category->tags = isset($data['tags']) ? $data['tags'] : null;
         $category->description = isset($data['description']) ? $data['description'] : null;
-        $category->status = isset($data['status']) ? $data['status'] : 1;
-        $category->parentId = isset($data['parentId']) ? $data['parentId'] : null;
+        $category->status = isset($data['status']) ? $data['status'] : self::STATUS_ACTIVE;
+        if(isset($data['parent'])){
+            $category->parent = $data['parent'];
+        }elseif (isset($data['parentId'])){
+            $category->parentId = $data['parentId'];
+        }
         $category->depth = isset($data['depth']) ? $data['depth'] : 0;
 
         if ($category->save()) {
@@ -168,6 +188,18 @@ class Category extends ActiveRecord
      *          'description' => $description,
      *          'status' => $status,
      *          'parentId' => $parentId,
+     *          'prent' => [
+     *              'section' => $section,
+     *              'name' => $name,
+     *              'tags' => $tags,
+     *              'description' => $description,
+     *              'status' => $status,
+     *              'parentId' => $parentId,
+     *              'prent' => [
+     *                  .....
+     *              ]
+     *              'depth' => $depth,
+     *          ]
      *          'depth' => $depth,
      *      ]
      * </code>
@@ -176,32 +208,38 @@ class Category extends ActiveRecord
      *
      * @throws NotFoundHttpException
      *
-     * @internal  string $section section
+     * @internal  string $section section optional
      *
-     * @internal  string $name name
+     * @internal  string $name name optional
      *
-     * @internal  string $tags tags
+     * @internal  string $tags tags optional
      *
-     * @internal  string $description description
+     * @internal  string $description description optional
      *
-     * @internal  smallInteger $status status
+     * @internal  smallInteger $status status optional
      *
-     * @internal  integer $parentId parentId
+     * @internal  integer $parentId parentId optional
      *
-     * @internal  integer $depth depth
+     * @internal  array $parrent optional optional
+     *
+     * @internal  integer $depth depth optional
      *
      */
     public static function edit($id, $data)
     {
         $category = Category::findOne($id);
         if ($category) {
-            $category->section = isset($data['section']) ? $data['section'] : 'main';
-            $category->name = isset($data['name']) ? $data['name'] : '';
-            $category->tags = isset($data['tags']) ? $data['tags'] : null;
-            $category->description = isset($data['description']) ? $data['description'] : null;
-            $category->status = isset($data['status']) ? $data['status'] : 1;
-            $category->parentId = isset($data['parentId']) ? $data['parentId'] : null;
-            $category->depth = isset($data['depth']) ? $data['depth'] : 0;
+            $category->section = isset($data['section']) ? $data['section'] : $category->section;
+            $category->name = isset($data['name']) ? $data['name'] : $category->name;
+            $category->tags = isset($data['tags']) ? $data['tags'] : $category->tags;
+            $category->description = isset($data['description']) ? $data['description'] : $category->description;
+            $category->status = isset($data['status']) ? $data['status'] : $category->status;
+            if(isset($data['parent'])){
+                $category->parent = $data['parent'];
+            }elseif (isset($data['parentId'])){
+                $category->parentId = $data['parentId'];
+            }
+            $category->depth = isset($data['depth']) ? $data['depth'] : $category->depth;
             if ($category->save()) {
                 Alert::success('دسته با موفقیت ویرایش شد', 'اسم دسته : ' . $category->name);
                 return $category;
@@ -214,11 +252,11 @@ class Category extends ActiveRecord
     }
 
     /**
-     * Get one level down child of current category.
+     * Get one level down children of current category.
      *
      * @return $this
      */
-    public function getChild(){
+    public function getChildren(){
         return $this->hasMany(self::class, ['parentId' => 'id'])->where(['depth'=>$this->depth+1]);
     }
 
@@ -237,9 +275,9 @@ class Category extends ActiveRecord
         if ($categories) {
             $arr = Array();
             foreach ($categories as $cat) {
-                $children = static::getCategoriesAsArray($cat->id);
-                if ($children)
-                    $arr[] = ['id' => $cat->id, 'name' => $cat->name, 'parent' => $children];
+                $childrenren = static::getCategoriesAsArray($cat->id);
+                if ($childrenren)
+                    $arr[] = ['id' => $cat->id, 'name' => $cat->name, 'parent' => $childrenren];
                 else
                     $arr[] = ['id' => $cat->id, 'name' => $cat->name];
             }
@@ -267,9 +305,9 @@ class Category extends ActiveRecord
         if ($categories) {
             $arr = Array();
             foreach ($categories as $cat) {
-                $children = static::getCategoriesBySectionAsArray($section, $cat->id);
-                if ($children)
-                    $arr[] = ['id' => $cat->id, 'name' => $cat->name, 'parent' => $children];
+                $childrenren = static::getCategoriesBySectionAsArray($section, $cat->id);
+                if ($childrenren)
+                    $arr[] = ['id' => $cat->id, 'name' => $cat->name, 'parent' => $childrenren];
                 else
                     $arr[] = ['id' => $cat->id, 'name' => $cat->name];
             }
@@ -314,6 +352,8 @@ class Category extends ActiveRecord
      *
      * @return null|string
      *
+     * @deprecated This function is not valid and will delete as soon
+     *
      * @author Saghar Mojdehi <saghar.mojdehi@gmail.com>
      */
     public function getLink($api = true)
@@ -337,15 +377,76 @@ class Category extends ActiveRecord
         }
     }
 
+    /**
+     * Create new children category
+     *
+     * @param array $data <code>
+     *      [
+     *          'id' => $parentId
+     *          'section' => $section,
+     *          'name' => $name,
+     *          'tags' => $tags,
+     *          'description' => $description,
+     *          'status' => $status,
+     *          'parentId' => $parentId,
+     *          'depth' => $depth,
+     *      ]
+     * </code>
+     *
+     * @return Category
+     *
+     * @internal  integer $id parent id.
+     *
+     * @internal  string $section section
+     *
+     * @internal  string $name name
+     *
+     * @internal  string $tags tags
+     *
+     * @internal  string $description description
+     *
+     * @internal  smallInteger $status status
+     *
+     * @internal  integer $parentId parentId
+     *
+     * @internal  integer $depth depth
+     *
+     */
+    public function setChildren(array  $array) {
+        foreach ($array as $data){
+            if(isset($data['id'])){
+                $children = self::findOne($data['id']);
+            }else{
+                $children = new Category();
+            }
+            $children->load($data, '');
+            $children->depth = $this->depth + 1;
+            $children->parentId = $this->id;
+            $children->save();
+        }
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function delete()
+    {
+        $this->status = self::STATUS_REMOVED;
+        return $this->save(false);
+    }
+
     public function fields()
     {
         $fields = [
             'id',
+            'section',
             'name',
             'description',
+            'tags',
             'updateAt',
             'createAt',
-            'child'
+            'children'
         ];
 
         return $fields;

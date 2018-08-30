@@ -13,6 +13,7 @@
     "require": {
         "yiisoft/yii2": "~2.0.0",
         "aminkt/yii2-tree-view-widget": "dev-master",
+        "aminkt/yii2-custom-exceptions": "dev-master",
         "aminkt/yii2-input-tag-widget": "dev-master",
         "aminkt/yii2-alert-widget": "dev-master",
         "kartik-v/yii2-widget-select2": "@dev"
