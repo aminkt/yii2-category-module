@@ -257,7 +257,7 @@ class Category extends ActiveRecord
      * @return $this
      */
     public function getChildren(){
-        return $this->hasMany(self::class, ['parentId' => 'id'])->where(['depth'=>$this->depth+1]);
+        return $this->hasMany(self::class, ['parentId' => 'id'])->where(['depth'=>$this->depth+1])->andWhere(['status'=>self::STATUS_ACTIVE]);
     }
 
     /**
@@ -343,6 +343,16 @@ class Category extends ActiveRecord
             return $this;
         }
         throw new \RuntimeException('Status not changed');
+    }
+
+    public function beforeSave($insert)
+    {
+        if($this->parent){
+            $this->depth = $this->parent->depth + 1;
+        }else{
+            $this->depth = 0;
+        }
+        return parent::beforeSave($insert);
     }
 
     /**

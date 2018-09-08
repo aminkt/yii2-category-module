@@ -53,7 +53,8 @@ class CategorySearch extends Category
        $dataProvider = new ActiveDataProvider([
            'query' => $query,
        ]);
-       
+
+       $query->where(['cat.status' => self::STATUS_ACTIVE]);
 
        if (!($this->load($params, $formName) && $this->validate())) {
            return $dataProvider;
