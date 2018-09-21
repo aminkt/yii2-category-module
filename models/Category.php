@@ -455,10 +455,12 @@ class Category extends ActiveRecord
             'description',
             'tags',
             'updateAt',
-            'createAt',
-            'children'
+            'createAt'
         ];
 
+        if($this->children){
+            $fields[] = 'children';
+        }
         return $fields;
     }
 }
