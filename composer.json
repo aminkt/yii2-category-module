@@ -12,11 +12,11 @@
     ],
     "require": {
         "yiisoft/yii2": "~2.0.0",
-        "aminkt/yii2-tree-view-widget": "*",
-        "aminkt/yii2-custom-exceptions": "*",
-        "aminkt/yii2-input-tag-widget": "*",
-        "aminkt/yii2-alert-widget": "*",
-        "kartik-v/yii2-widget-select2": "*"
+        "aminkt/yii2-tree-view-widget": ">=1.0.0",
+        "aminkt/yii2-custom-exceptions": ">=1.0.0",
+        "aminkt/yii2-input-tag-widget": ">=1.0.0",
+        "aminkt/yii2-alert-widget": ">1.0.0",
+        "kartik-v/yii2-widget-select2": ">=1.0.0"
     },
     "autoload": {
         "psr-4": {
