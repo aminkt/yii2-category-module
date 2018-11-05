@@ -1,21 +1,17 @@
 <?php
 
-namespace saghar\category\models;
+namespace saghar\category\mongo\models;
 
-use aminkt\widgets\alert\Alert;
-use api\components\UrlMaker;
+use MongoDB\BSON\ObjectId;
 use saghar\category\interfaces\CategoryConstantsInterface;
 use saghar\category\interfaces\CategoryInterfaces;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
-use yii\db\Expression;
-use yii\helpers\Url;
-use yii\web\NotFoundHttpException;
 
 /**
- * This is the model class for table "{{%categories}}".
+ * This is the model class for collection "categories".
  *
- * @property int $id
+ * @property ObjectId $_id
+ * @property string $id
  * @property string $section
  * @property string $name
  * @property string $description
@@ -30,15 +26,15 @@ use yii\web\NotFoundHttpException;
  * @property Category $parent read-only
  * @property string $parentName
  */
-class Category extends ActiveRecord implements CategoryInterfaces, CategoryConstantsInterface
+class Category extends \yii\mongodb\ActiveRecord implements CategoryInterfaces, CategoryConstantsInterface
 {
 
     /**
      * @inheritdoc
      */
-    public static function tableName()
+    public static function collectionName()
     {
-        return '{{%categories}}';
+        return 'categories';
     }
 
     public function behaviors()
@@ -51,8 +47,25 @@ class Category extends ActiveRecord implements CategoryInterfaces, CategoryConst
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['update_at'],
                 ],
                 // if you're using datetime instead of UNIX timestamp:
-                'value' => new Expression('NOW()'),
+                'value' => new \MongoDB\BSON\UTCDateTime(time()),
             ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributes()
+    {
+        return [
+            '_id',
+            'section',
+            'name',
+            'description',
+            'status',
+            'parent_id',
+            'update_at',
+            'create_at'
         ];
     }
 
@@ -74,7 +87,7 @@ class Category extends ActiveRecord implements CategoryInterfaces, CategoryConst
      */
     public function getParent()
     {
-        return $this->hasOne(Category::className(), ['id' => 'parent_id']);
+        return $this->hasOne(Category::className(), ['_id' => 'parent_id']);
     }
 
     /**
@@ -82,7 +95,7 @@ class Category extends ActiveRecord implements CategoryInterfaces, CategoryConst
      */
     public function getCategories()
     {
-        return $this->hasMany(Category::className(), ['parent_id' => 'id']);
+        return $this->hasMany(Category::className(), ['parent_id' => '_id']);
     }
 
     /**
@@ -91,7 +104,7 @@ class Category extends ActiveRecord implements CategoryInterfaces, CategoryConst
      * @return $this
      */
     public function getChildren(){
-        return $this->hasMany(self::class, ['parent_id' => 'id'])->where(['depth'=>$this->depth+1])->andWhere(['status'=>self::STATUS_ACTIVE]);
+        return $this->hasMany(self::class, ['parent_id' => '_id'])->where(['depth'=>$this->depth+1])->andWhere(['status'=>self::STATUS_ACTIVE]);
     }
 
     /**
@@ -116,9 +129,6 @@ class Category extends ActiveRecord implements CategoryInterfaces, CategoryConst
         return $this->save(false);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function fields()
     {
         $fields = [
@@ -126,6 +136,7 @@ class Category extends ActiveRecord implements CategoryInterfaces, CategoryConst
             'section',
             'name',
             'description',
+            'tags',
             'updateAt',
             'createAt'
         ];
@@ -141,6 +152,6 @@ class Category extends ActiveRecord implements CategoryInterfaces, CategoryConst
      */
     public function getId()
     {
-        return $this->id;
+        return $this->_id;
     }
 }

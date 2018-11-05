@@ -15,7 +15,7 @@ class m180104_145240_add_parent_relation extends Migration
         $this->addForeignKey(
             'categories_fk_categories_parentId',
             '{{%categories}}',
-            'parentId',
+            'parent_id',
             '{{%categories}}',
             'id',
             'SET NULL',
