@@ -39,7 +39,7 @@ Once the extension is installed, simply use it in your code by  :
 > Note: You can leave `modelClass` and `searchModelClass` blank to use default models of module.
 > If you are using mongo db, you can use models implemented in `\saghar\category\models\mongo`
 
-2. Run migration files of module using `yii migrate --migrationPath=@vendor/saghar/yii2-category-module/migrations --interactive=0`
+2. Run migration files of module using `yii migrate --migrationPath=@vendor/saghar/yii2-category-module/src/migrations --interactive=0`
 
 > Note: If you are using mongo db please skip this step.
 
