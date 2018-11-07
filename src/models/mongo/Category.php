@@ -1,11 +1,12 @@
 <?php
 
-namespace saghar\category\mongo\models;
+namespace saghar\category\models\mongo;
 
 use MongoDB\BSON\ObjectId;
 use saghar\category\interfaces\CategoryConstantsInterface;
 use saghar\category\interfaces\CategoryInterfaces;
 use yii\behaviors\TimestampBehavior;
+use \yii\mongodb\ActiveRecord;
 
 /**
  * This is the model class for collection "categories".
@@ -26,7 +27,7 @@ use yii\behaviors\TimestampBehavior;
  * @property Category $parent read-only
  * @property string $parentName
  */
-class Category extends \yii\mongodb\ActiveRecord implements CategoryInterfaces, CategoryConstantsInterface
+class Category extends ActiveRecord implements CategoryInterfaces, CategoryConstantsInterface
 {
 
     /**
@@ -61,6 +62,7 @@ class Category extends \yii\mongodb\ActiveRecord implements CategoryInterfaces, 
             '_id',
             'section',
             'name',
+            'depth',
             'description',
             'status',
             'parent_id',
@@ -77,8 +79,9 @@ class Category extends \yii\mongodb\ActiveRecord implements CategoryInterfaces, 
         return [
             [['name'], 'required'],
             [['status', 'parent_id', 'depth'], 'integer'],
-            [['children'], 'safe'],
+            [['status'], 'default', 'value' => static::STATUS_ACTIVE],
             [['section', 'name', 'description'], 'string', 'max' => 255],
+            [['parent_id'], 'exist', 'targetClass' => static::class, 'targetAttribute' => ['parent_id' => '_id']]
         ];
     }
 
@@ -136,9 +139,8 @@ class Category extends \yii\mongodb\ActiveRecord implements CategoryInterfaces, 
             'section',
             'name',
             'description',
-            'tags',
-            'updateAt',
-            'createAt'
+            'update_at',
+            'create_at'
         ];
 
         if($this->children){

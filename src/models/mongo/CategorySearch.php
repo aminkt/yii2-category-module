@@ -1,6 +1,6 @@
 <?php
 
-namespace saghar\category\mobgo\models;
+namespace saghar\category\models\mongo;
 
 use yii\behaviors\TimestampBehavior;
 use yii\data\ActiveDataProvider;
