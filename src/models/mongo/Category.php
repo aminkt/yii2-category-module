@@ -48,7 +48,7 @@ class Category extends ActiveRecord implements CategoryInterfaces, CategoryConst
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['update_at'],
                 ],
                 // if you're using datetime instead of UNIX timestamp:
-                'value' => new \MongoDB\BSON\UTCDateTime(time()),
+                'value' => new \MongoDB\BSON\UTCDateTime(time() + 1000),
             ],
         ];
     }
@@ -128,8 +128,14 @@ class Category extends ActiveRecord implements CategoryInterfaces, CategoryConst
      */
     public function delete()
     {
-        $this->status = self::STATUS_REMOVED;
-        return $this->save(false);
+        $result = false;
+        if ($this->beforeDelete()) {
+            $this->status = self::STATUS_REMOVED;
+            $result = $this->save(false);
+            $this->afterDelete();
+        }
+
+        return $result;
     }
 
     public function fields()

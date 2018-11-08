@@ -112,8 +112,14 @@ class Category extends ActiveRecord implements CategoryInterfaces, CategoryConst
      */
     public function delete()
     {
-        $this->status = self::STATUS_REMOVED;
-        return $this->save(false);
+        $result = false;
+        if ($this->beforeDelete()) {
+            $this->status = self::STATUS_REMOVED;
+            $result = $this->save(false);
+            $this->afterDelete();
+        }
+
+        return $result;
     }
 
     /**
