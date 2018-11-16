@@ -78,7 +78,7 @@ class Category extends ActiveRecord implements CategoryInterfaces, CategoryConst
     {
         return [
             [['name'], 'required'],
-            [['status', 'parent_id', 'depth'], 'integer'],
+            [['status', 'depth'], 'integer'],
             [['status'], 'default', 'value' => static::STATUS_ACTIVE],
             [['section', 'name', 'description'], 'string', 'max' => 255],
             [['parent_id'], 'exist', 'targetClass' => static::class, 'targetAttribute' => ['parent_id' => '_id']]
