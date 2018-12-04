@@ -60,7 +60,7 @@ class RestApiController extends ActiveController
             $dataProvider = $searchModel->search($params, 'search');
         } else {
             $modelClass = Category::getInstance()->modelClass;
-            $query = $modelClass::find()->where(['status' => $modelClass::STATUS_ACTIVE]);
+            $query = $modelClass::find()->where(['status' => $modelClass::STATUS_ACTIVE, 'depth' => 0]);
             $dataProvider = new ActiveDataProvider([
                 'query' => $query
             ]);
