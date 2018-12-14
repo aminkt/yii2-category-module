@@ -28,8 +28,8 @@ class CategorySearch extends Category
    public function rules()
    {
        return [
-           [['section', 'name', 'tags', 'description', 'parentName'], 'string', 'max' => 255],
-           [['status', 'parentId', 'depth', 'id'], 'integer'],
+           [['section', 'name', 'description', 'parentName'], 'string', 'max' => 255],
+           [['status', 'parent_id', 'depth', 'id'], 'integer'],
        ];
    }
 
@@ -62,14 +62,13 @@ class CategorySearch extends Category
 
 
        $query->andFilterWhere(['cat.status' => $this->status])
-           ->andFilterWhere(['cat.parentId' => $this->parentId])
+           ->andFilterWhere(['cat.parentId' => $this->parent_id])
            ->andFilterWhere(['cat.depth' => $this->depth])
            ->andFilterWhere(['cat.id' => $this->id]);
 
        $query->andFilterWhere(['like', 'cat.name', $this->name])
            ->andFilterWhere(['like', 'cat.section', $this->section])
-           ->andFilterWhere(['like', 'c.name', $this->parentName])
-           ->andFilterWhere(['like', 'cat.tags', $this->tags]);
+           ->andFilterWhere(['like', 'c.name', $this->parentName]);
 
 
        return $dataProvider;

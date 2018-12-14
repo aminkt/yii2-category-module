@@ -1,5 +1,5 @@
 {
-    "name": "saghar/yii2-category-module",
+    "name": "aminkt/yii2-category-module",
     "description": "Category Module",
     "type": "yii2-extension",
     "keywords": ["yii2","extension"],
@@ -8,19 +8,24 @@
         {
             "name": "Saghar Mojdehi",
             "email": "saghar.mojdehi@gmail.com"
+        },
+        {
+            "name": "Amin Keshavarz",
+            "email": "ak_1596@yahoo.com"
         }
     ],
     "require": {
         "yiisoft/yii2": "~2.0.0",
-        "aminkt/yii2-tree-view-widget": "dev-master",
-        "aminkt/yii2-custom-exceptions": "dev-master",
-        "aminkt/yii2-input-tag-widget": "dev-master",
-        "aminkt/yii2-alert-widget": "dev-master",
-        "kartik-v/yii2-widget-select2": "@dev"
+        "aminkt/yii2-tree-view-widget": ">=1.0.0",
+        "aminkt/yii2-custom-exceptions": ">=1.0.0",
+        "aminkt/yii2-input-tag-widget": ">=1.0.0",
+        "aminkt/yii2-alert-widget": ">=1.0.0",
+        "kartik-v/yii2-widget-select2": ">=1.0.0"
     },
     "autoload": {
-        "psr-4": {
-            "saghar\\category\\": ""
-        }
+        "psr-4": {"saghar\\category\\": "src"}
+    },
+    "autoload-dev": {
+        "psr-4": {"saghar\\category\\test": "test"}
     }
 }
