@@ -107,7 +107,10 @@ class Category extends ActiveRecord implements CategoryInterfaces, CategoryConst
      * @return $this
      */
     public function getChildren(){
-        return static::find(['parent_id' => '_id'])->where(['depth'=>$this->depth+1])->andWhere(['status'=>self::STATUS_ACTIVE])->all();
+        return static::find()->where([
+            'parent_id' => $this->id,
+            'depth'=>$this->depth+1
+        ])->andWhere(['status'=>self::STATUS_ACTIVE])->all();
     }
 
     /**
