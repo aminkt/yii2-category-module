@@ -12,6 +12,8 @@ class m180103_112059_create_table extends Migration
      */
     public function safeUp()
     {
+        $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
+
         $this->createTable('{{%categories}}', [
             'id' => $this->primaryKey(),
             'section' => $this->string()->notNull()->defaultValue('main'),
@@ -22,7 +24,7 @@ class m180103_112059_create_table extends Migration
             'depth' => $this->integer()->notNull()->defaultValue(0),
             'update_at' => $this->dateTime(),
             'create_at' => $this->dateTime(),
-        ]);
+        ], $tableOptions);
     }
 
     /**

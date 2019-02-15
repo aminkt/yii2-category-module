@@ -74,7 +74,7 @@ class Category extends ActiveRecord implements CategoryInterfaces, CategoryConst
      */
     public function getParent()
     {
-        return $this->hasOne(Category::className(), ['id' => 'parent_id']);
+        return $this->hasOne(Category::class, ['id' => 'parent_id']);
     }
 
     /**
@@ -82,16 +82,16 @@ class Category extends ActiveRecord implements CategoryInterfaces, CategoryConst
      */
     public function getCategories()
     {
-        return $this->hasMany(Category::className(), ['parent_id' => 'id']);
+        return $this->hasMany(Category::class, ['parent_id' => 'id']);
     }
 
     /**
      * Get one level down children of current category.
      *
-     * @return $this
+     * @return \yii\db\ActiveQuery
      */
     public function getChildren(){
-        return $this->hasMany(self::class, ['parent_id' => 'id'])->where(['depth'=>$this->depth+1])->andWhere(['status'=>self::STATUS_ACTIVE]);
+        return $this->hasMany(static::class, ['parent_id' => 'id'])->where(['depth'=>$this->depth+1])->andWhere(['status'=>self::STATUS_ACTIVE]);
     }
 
     /**
@@ -132,8 +132,8 @@ class Category extends ActiveRecord implements CategoryInterfaces, CategoryConst
             'section',
             'name',
             'description',
-            'updateAt',
-            'createAt'
+            'update_at',
+            'create_at'
         ];
 
         if($this->children){
