@@ -52,9 +52,9 @@ class RestApiController extends ActiveController
      */
     public function prepareDataProvider()
     {
-        $searchModelCalss = Category::getInstance()->searchModelClass;
-        if ($searchModelCalss) {
-            $model = new $searchModelCalss();
+        $searchModelClass = Category::getInstance()->searchModelClass;
+        if ($searchModelClass) {
+            $searchModel = new $searchModelClass();
             $params = \Yii::$app->request->queryParams;
             $params['search']['depth'] = 0;
             $dataProvider = $searchModel->search($params, 'search');
@@ -71,7 +71,7 @@ class RestApiController extends ActiveController
     /**
      * @inheritdoc
      *
-     * @param User $model
+     * @param \saghar\category\interfaces\CategoryInterfaces $model
      */
     public function checkAccess($action, $model = null, $params = [])
     {
